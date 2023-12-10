@@ -1,3 +1,7 @@
+#include <PS4Controller.h>
+#include <ps4.h>
+#include <ps4_int.h>
+
 #include "esp_camera.h"
 #include <WiFi.h>
 #include <WebServer.h>
