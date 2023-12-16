@@ -1,7 +1,7 @@
 import customtkinter as ctk
 import tkinter
 import urllib.request
-from esp_controlelr_functions import *
+from esp_controller_functions import *
 import os
 from PIL import Image, ImageTk
 
