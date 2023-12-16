@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import tkinter
 import urllib.request
 from esp_controlelr_functions import *
 import os
@@ -16,7 +17,7 @@ if __name__ == '__main__':
     ctk.deactivate_automatic_dpi_awareness()
     app = ctk.CTk()
     icon_path = "\icon.ico"
-    app.iconbitmap(os.getcwd()+icon_path)
+    app.iconbitmap(Cwd+icon_path)
     app.title("ESP Control \n")
     app.geometry('710x730')
     # app.resizable(False, False)
@@ -92,9 +93,9 @@ if __name__ == '__main__':
     DownArrowButton.grid(row=4, padx=10, pady=(7,20) ,column=0,columnspan=2)
 
     #Other Buttons
-    TrCButton = ctk.CTkButton(ControlelrFrame,image=TrButton,text="",width=37,height=37,fg_color=FDark,hover_color=Green,command=TrFunc)
+    TrCButton = ctk.CTkButton(ControlelrFrame,image=TrButton,text="",width=37,height=37,fg_color=FDark,hover_color=Green,command=TriangleFunc)
     TrCButton.grid(row=2, padx=10, pady=(20,7) ,column=3,columnspan=2)
-    OCButton = ctk.CTkButton(ControlelrFrame,image=OButton,text="",width=37,height=37,fg_color=FDark,hover_color=Pink,command=OFunc)
+    OCButton = ctk.CTkButton(ControlelrFrame,image=OButton,text="",width=37,height=37,fg_color=FDark,hover_color=Pink,command=CircleFunc)
     OCButton.grid(row=3, padx=(20,30),column=4)
     SquareCButton = ctk.CTkButton(ControlelrFrame,image=SquareButton,text="",width=37,height=37,fg_color=FDark,hover_color=Pink,command=SquareFunc)
     SquareCButton.grid(row=3, padx=(30,20) ,column=3)
