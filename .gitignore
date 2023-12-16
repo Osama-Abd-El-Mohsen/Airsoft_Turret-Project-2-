@@ -1,3 +1,6 @@
 esp_test.py
 .vscode
 __pycache__
+*.spec
+build
+dist
