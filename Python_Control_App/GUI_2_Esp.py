@@ -20,7 +20,7 @@ if __name__ == '__main__':
     app.iconbitmap(Cwd+icon_path)
     app.title("ESP Control \n")
     app.geometry('710x730')
-    # app.resizable(False, False)
+    app.resizable(False, False)
     # app.grid_columnconfigure(2, weight=4)
 
     #images & Pallete
