@@ -34,7 +34,17 @@ LB = 4
 RB = 5
 
 def SendRequest(Request):
-    pass
+    Url = "http://192.168.1.4"
+    try:
+        urllib.request.urlopen(Url+Request)
+    except Exception as e:
+        try:
+            pass
+            urllib.request.urlopen(Url+Request)
+        except Exception as e:
+            print("Request failed:", e)
+
+
 
 
 def change_apperance_mode(new_appearance_mode: str):
