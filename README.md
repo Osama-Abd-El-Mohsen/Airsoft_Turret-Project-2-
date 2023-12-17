@@ -11,4 +11,4 @@ https://github.com/Osama-Abd-El-Mohsen/Airsoft_Turret-Project-2-/assets/62304741
 
 
 # Airsoft_Control_App (GUI)
-![Alt text](</Assets/GUI_App.jpg>)
+![Alt text](</Assets/GUI_App_With_ESP.png>)
