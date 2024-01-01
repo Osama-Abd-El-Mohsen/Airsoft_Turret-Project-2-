@@ -1,16 +1,29 @@
 import customtkinter as ctk
-import tkinter
-import urllib.request
 from esp_controller_functions import *
 import os
 from PIL import Image, ImageTk
-
+import cv2
 
 Cwd = os.getcwd()
 color_mode_list = ['Dark', 'Light']
+photo = None  # Initialize photo as a global variable
+vid = cv2.VideoCapture("http://192.168.1.4"+":81/stream")
+
+
+def update():
+    ret, frame = vid.read()
+    frame = cv2.resize(frame,(560,400))
+    if ret:
+        global photo  # Declare photo as a global variable
+        photo = ImageTk.PhotoImage(image=Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)))
+        canvas.create_image(0, 0, image=photo, anchor=ctk.NW)
+    app.after(4, update)
+
+
 
 if __name__ == '__main__':
-
+    # set_resolution("http://192.168.1.4",index=4)
+    # set_quality("http://192.168.1.4",value=40)
     # config my app
     ctk.ThemeManager.load_theme('green')
     ctk.AppearanceModeTracker.set_appearance_mode('system')
@@ -19,7 +32,7 @@ if __name__ == '__main__':
     icon_path = "\icon.ico"
     app.iconbitmap(Cwd+icon_path)
     app.title("ESP Control \n")
-    app.geometry('710x730')
+    app.geometry('1060x770')
     app.resizable(False, False)
     # app.grid_columnconfigure(2, weight=4)
 
@@ -83,38 +96,76 @@ if __name__ == '__main__':
     SpaceFrame.grid(row=0, column=2,padx=10, pady=10,rowspan=5)
 
     #Arrows buttons
-    UpArrowButton = ctk.CTkButton(ControlelrFrame,image=UpArrow,text="",width=39,height=48,fg_color=FDark,hover_color=Dark,command=UpArrowButtonFunc)
+    UpArrowButton = ctk.CTkButton(ControlelrFrame,image=UpArrow,text="",width=39,height=48,fg_color=FDark,hover_color=Dark)
+    UpArrowButton.bind("<ButtonPress-1>", UpArrowButtonOnPressFunc)
+    UpArrowButton.bind("<ButtonRelease-1>", UpArrowButtonOnReleaseFunc)
     UpArrowButton.grid(row=2, padx=10, pady=(20,7) ,column=0,columnspan=2)
-    RightArrowButton = ctk.CTkButton(ControlelrFrame,image=RightArrow,text="",width=48,height=39,fg_color=FDark,hover_color=Dark,command=RightArrowButtonFunc)
+
+    RightArrowButton = ctk.CTkButton(ControlelrFrame,image=RightArrow,text="",width=48,height=39,fg_color=FDark,hover_color=Dark)
+    RightArrowButton.bind("<ButtonPress-1>", RightArrowButtonOnPressFunc)
+    RightArrowButton.bind("<ButtonRelease-1>", RightArrowButtonOnReleaseFunc)
     RightArrowButton.grid(row=3, padx=(20,30),pady=0,column=1)
-    LeftArrowButton = ctk.CTkButton(ControlelrFrame,image=LeftArrow,text="",width=48,height=39,fg_color=FDark,hover_color=Dark,command=LeftArrowButtonFunc)
+
+    LeftArrowButton = ctk.CTkButton(ControlelrFrame,image=LeftArrow,text="",width=48,height=39,fg_color=FDark,hover_color=Dark)
+    LeftArrowButton.bind("<ButtonPress-1>", LeftArrowButtonOnPressFunc)
+    LeftArrowButton.bind("<ButtonRelease-1>", LeftArrowButtonOnReleaseFunc)
     LeftArrowButton.grid(row=3, padx=(30,20),pady=0 ,column=0)
-    DownArrowButton = ctk.CTkButton(ControlelrFrame,image=DownArrow,text="",width=39,height=48,fg_color=FDark,hover_color=Dark,command=DownArrowButtonFunc)
+
+    DownArrowButton = ctk.CTkButton(ControlelrFrame,image=DownArrow,text="",width=39,height=48,fg_color=FDark,hover_color=Dark)
+    DownArrowButton.bind("<ButtonPress-1>", DownArrowButtonOnPressFunc)
+    DownArrowButton.bind("<ButtonRelease-1>", DownArrowButtonOnReleaseFunc)
     DownArrowButton.grid(row=4, padx=10, pady=(7,20) ,column=0,columnspan=2)
 
     #Other Buttons
-    TrCButton = ctk.CTkButton(ControlelrFrame,image=TrButton,text="",width=37,height=37,fg_color=FDark,hover_color=Green,command=TriangleFunc)
+    TrCButton = ctk.CTkButton(ControlelrFrame,image=TrButton,text="",width=37,height=37,fg_color=FDark,hover_color=Green)
+    TrCButton.bind("<ButtonPress-1>", TriangleOnPressFunc)
+    TrCButton.bind("<ButtonRelease-1>", TriangleOnReleaseFunc)
     TrCButton.grid(row=2, padx=10, pady=(20,7) ,column=3,columnspan=2)
-    OCButton = ctk.CTkButton(ControlelrFrame,image=OButton,text="",width=37,height=37,fg_color=FDark,hover_color=Pink,command=CircleFunc)
+
+    OCButton = ctk.CTkButton(ControlelrFrame,image=OButton,text="",width=37,height=37,fg_color=FDark,hover_color=Pink)
+    OCButton.bind("<ButtonPress-1>", CircleOnPressFunc)
+    OCButton.bind("<ButtonRelease-1>", CircleOnReleaseFunc)
     OCButton.grid(row=3, padx=(20,30),column=4)
-    SquareCButton = ctk.CTkButton(ControlelrFrame,image=SquareButton,text="",width=37,height=37,fg_color=FDark,hover_color=Pink,command=SquareFunc)
+
+    SquareCButton = ctk.CTkButton(ControlelrFrame,image=SquareButton,text="",width=37,height=37,fg_color=FDark,hover_color=Pink)
+    SquareCButton.bind("<ButtonPress-1>", SquareOnPressFunc)
+    SquareCButton.bind("<ButtonRelease-1>", SquareOnReleaseFunc)
     SquareCButton.grid(row=3, padx=(30,20) ,column=3)
-    XCButton = ctk.CTkButton(ControlelrFrame,image=XButton,text="",width=37,height=37,fg_color=FDark,hover_color=Blue,command=XFunc)
+
+    XCButton = ctk.CTkButton(ControlelrFrame,image=XButton,text="",width=37,height=37,fg_color=FDark,hover_color=Blue)
+    XCButton.bind("<ButtonPress-1>", XOnPressFunc)
+    XCButton.bind("<ButtonRelease-1>", XOnReleaseFunc)
     XCButton.grid(row=4, padx=10, pady=(7,20) ,column=3,columnspan=2)
 
     #LB LT RB RT
-    LTCButton = ctk.CTkButton(ControlelrFrame,image=LTButton,text="",width=63,height=33,fg_color=FDark,hover_color=Dark,command=LtFunc)
+    LTCButton = ctk.CTkButton(ControlelrFrame,image=LTButton,text="",width=63,height=33,fg_color=FDark,hover_color=Dark)
+    LTCButton.bind("<ButtonPress-1>", LtOnPressFunc)
+    LTCButton.bind("<ButtonRelease-1>", LtOnReleaseFunc)
     LTCButton.grid(row=1, padx=10,column=0,columnspan=2)
-    RTCButton = ctk.CTkButton(ControlelrFrame,image=RTButton,text="",width=63,height=33,fg_color=FDark,hover_color=Dark,command=RtFunc)
+
+    RTCButton = ctk.CTkButton(ControlelrFrame,image=RTButton,text="",width=63,height=33,fg_color=FDark,hover_color=Dark)
+    RTCButton.bind("<ButtonPress-1>", RtOnPressFunc)
+    RTCButton.bind("<ButtonRelease-1>", RtOnReleaseFunc)
     RTCButton.grid(row=1, pady=10 ,column=3,columnspan=2)
-    LBCButton = ctk.CTkButton(ControlelrFrame,image=LBButton,text="",width=63,height=48,fg_color=FDark,hover_color=Dark,command=LbFunc)
+
+    LBCButton = ctk.CTkButton(ControlelrFrame,image=LBButton,text="",width=63,height=48,fg_color=FDark,hover_color=Dark)
+    LBCButton.bind("<ButtonPress-1>", LbOnPressFunc)
+    LBCButton.bind("<ButtonRelease-1>", LbOnReleaseFunc)
     LBCButton.grid(row=0, padx=10, pady=(20,10) ,column=0,columnspan=2)
-    RBCButton = ctk.CTkButton(ControlelrFrame,image=RBButton,text="",width=63,height=48,fg_color=FDark,hover_color=Dark,command=RbFunc)
+
+    RBCButton = ctk.CTkButton(ControlelrFrame,image=RBButton,text="",width=63,height=48,fg_color=FDark,hover_color=Dark)
+    RBCButton.bind("<ButtonPress-1>", RbOnPressFunc)
+    RBCButton.bind("<ButtonRelease-1>", RbOnReleaseFunc)
     RBCButton.grid(row=0, padx=10, pady=(20,10) ,column=3,columnspan=2)
+
+    canvas = ctk.CTkCanvas(ControlelrFrame, width=560, height=400)
+    canvas.grid(row=0 ,column=2,rowspan=5,padx=0,pady=0)
+    print(vid.get(cv2.CAP_PROP_FRAME_WIDTH))
+    print(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     #Info Frame
     InfoAppFrame = ctk.CTkFrame(app)
-    InfoAppFrame.grid(row=1, padx=10, pady=0 ,column=0)
+    InfoAppFrame.grid(row=1, padx=10, pady=0 ,column=0,columnspan=2)
     InfoFrame = ctk.CTkFrame(InfoAppFrame)
     InfoFrame.grid(row=1, padx=10, pady=10 ,column=0)
     XLabel=ctk.CTkLabel(InfoFrame,text="  Move Forward   ",image=XButtonInfo, font=ctk.CTkFont('Arial', 25,weight='bold'),compound="left")
@@ -132,15 +183,27 @@ if __name__ == '__main__':
     InfoFrame2.grid(row=1, padx=5, pady=10 ,column=1)
 
     InfoFrame3 = ctk.CTkFrame(InfoAppFrame)
-    InfoFrame3.grid(row=1, padx=10, pady=10 ,column=2)
+    InfoFrame3.grid(row=1, padx=10, pady=10 ,column=2,columnspan=2)
     nameInfo=ctk.CTkLabel(InfoFrame3,text="By : ", font=ctk.CTkFont('Arial', 25,weight='bold'),text_color=Red,compound="left")
     nameInfo.grid(row=0, padx=10, pady=10 ,column=0)
-    nameInfo=ctk.CTkLabel(InfoFrame3,text="Osama Abd El Mohsen",text_color=Red, font=ctk.CTkFont('Arial', 15,weight='bold'),compound="left")
+    nameInfo=ctk.CTkLabel(InfoFrame3,text="Osama Abd El Mohsen",text_color=Red, font=ctk.CTkFont('Arial', 23,weight='bold'),compound="left")
     nameInfo.grid(row=1, padx=10, pady=10 ,column=0)
     nameInfo=ctk.CTkLabel(InfoFrame3,text="& Software Team",text_color=Green, font=ctk.CTkFont('Arial', 15),compound="left")
     nameInfo.grid(row=2, padx=10, pady=10 ,column=0)
     nameInfo=ctk.CTkOptionMenu(InfoFrame3,values=['system','dark','light'],fg_color=Green,button_color=DarkGreen, font=ctk.CTkFont('Arial', 20,weight='bold'),command=change_apperance_mode,)
     nameInfo.grid(row=3, padx=10, pady=10 ,column=0)
+
+
+    InfoFrame4 = ctk.CTkFrame(InfoAppFrame)
+    InfoFrame4.grid(row=1, padx=10, pady=10 ,column=6,columnspan=2)
+    nameInfo=ctk.CTkLabel(InfoFrame4,text="Mazen Mohamed Atta",text_color=Red, font=ctk.CTkFont('Arial', 20,weight='bold'),compound="left")
+    nameInfo.grid(row=2, padx=10, pady=10 ,column=0)
+    nameInfo1=ctk.CTkLabel(InfoFrame4,text="Mohamed Salah El Din",text_color=Red, font=ctk.CTkFont('Arial', 20,weight='bold'),compound="left")
+    nameInfo1.grid(row=3, padx=10, pady=10 ,column=0)
+    nameInfo2=ctk.CTkLabel(InfoFrame4,text="Tarek Thabet El Gendy",text_color=Red, font=ctk.CTkFont('Arial', 20,weight='bold'),compound="left")
+    nameInfo2.grid(row=4, padx=10, pady=10 ,column=0)
+    nameInfo3=ctk.CTkLabel(InfoFrame4,text="Abd Allah Ashraf",text_color=Red, font=ctk.CTkFont('Arial', 20,weight='bold'),compound="left")
+    nameInfo3.grid(row=5, padx=10, pady=10 ,column=0)
     
 
     
@@ -155,5 +218,5 @@ if __name__ == '__main__':
     DownArrowLabel=ctk.CTkLabel(InfoFrame2,text="   AirsoftDown",image=DownArrowInfo, font=ctk.CTkFont('Arial', 25,weight='bold'),compound="left")
     DownArrowLabel.grid(row=4, padx=10, pady=5 ,column=0)
 
-
+    update()
     app.mainloop()

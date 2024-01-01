@@ -7,9 +7,6 @@ import pyfiglet
 import urllib.request
 from esp_controller_functions import *
 
-
-
-
 pygame.init()
 pygame.joystick.init()
 
@@ -26,7 +23,6 @@ def joy_Get_Init():
             f"\033[1;31mThe State Of Initialization  => \33[37m❌\033[1;31m")
         print("\33[37m="*40)
         pass
-
 
 def num_Of_Joys():
     global joyNumbers
@@ -151,60 +147,107 @@ while True:
         for event in events:
             if event.type == pygame.JOYBUTTONDOWN:
                 if joystick.get_button(Square):
-                    SquareFunc()
-                    print("SquareFunc")
+                    SquareOnPressFunc()
+                    print("SquareOnPressFunc")
                 if joystick.get_button(X):
-                    XFunc()
-                    print("XFunc")
+                    XOnPressFunc()
+                    print("XOnPressFunc")
                 if joystick.get_button(Circle):
-                    CircleFunc()
-                    print("CircleFunc")
+                    CircleOnPressFunc()
+                    print("CircleOnPressFunc")
                 if joystick.get_button(Triangle):
-                    TriangleFunc()
-                    print("TriangleFunc")
+                    TriangleOnPressFunc()
+                    print("TriangleOnPressFunc")
                 if joystick.get_button(RT):
-                    RtFunc()
-                    print("RtFunc")
+                    RtOnPressFunc()
+                    print("RtOnPressFunc")
                 if joystick.get_button(LT):
-                    LtFunc()
-                    print("LtFunc")
+                    LtOnPressFunc()
+                    print("LtOnPressFunc")
                 if joystick.get_button(UpArrow):
-                    UpArrowButtonFunc()
-                    print("UpArrowButtonFunc")
+                    UpArrowButtonOnPressFunc()
+                    print("UpArrowButtonOnPressFunc")
                 if joystick.get_button(DownArrow):
-                    DownArrowButtonFunc()
-                    print("DownArrowButtonFunc")
+                    DownArrowButtonOnPressFunc()
+                    print("DownArrowButtonOnPressFunc")
                 if joystick.get_button(RightArrow):
-                    RightArrowButtonFunc()
-                    print("RightArrowButtonFunc")
+                    RightArrowButtonOnPressFunc()
+                    print("RightArrowButtonOnPressFunc")
                 if joystick.get_button(LeftArrow):
-                    LeftArrowButtonFunc()
-                    print("LeftArrowButtonFunc")
+                    LeftArrowButtonOnPressFunc()
+                    print("LeftArrowButtonOnPressFunc")
                 if joystick.get_button(Share):
-                    ShareFunc()
-                    print("ShareFunc")
+                    ShareOnPressFunc()
+                    print("ShareOnPressFunc")
                 if joystick.get_button(Ps):
-                    PsFunc()
-                    print("PsFunc")
+                    PsOnPressFunc()
+                    print("PsOnPressFunc")
                 if joystick.get_button(Options):
-                    OptionsFunc()
-                    print("OptionsFunc")
+                    OptionsOnPressFunc()
+                    print("OptionsOnPressFunc")
                 if joystick.get_button(R1Click):
-                    R1ClickFunc()
-                    print("R1ClickFunc")
+                    R1ClickOnPressFunc()
+                    print("R1ClickOnPressFunc")
                 if joystick.get_button(R2Click):
-                    R2ClickFunc()
-                    print("R2ClickFunc")
+                    R2ClickOnPressFunc()
+                    print("R2ClickOnPressFunc")
+
+            if event.type == pygame.JOYBUTTONUP:
+                if event.button == (Square):
+                    SquareOnReleaseFunc()
+                    print("SquareOnReleaseFunc")
+                if event.button == (X):
+                    XOnReleaseFunc()
+                    print("XOnReleaseFunc")
+                if event.button == (Circle):
+                    CircleOnReleaseFunc()
+                    print("CircleOnReleaseFunc")
+                if event.button == (Triangle):
+                    TriangleOnReleaseFunc()
+                    print("TriangleOnReleaseFunc")
+                if event.button == (RT):
+                    RtOnReleaseFunc()
+                    print("RtOnReleaseFunc")
+                if event.button == (LT):
+                    LtOnReleaseFunc()
+                    print("LtOnReleaseFunc")
+                if event.button == (UpArrow):
+                    UpArrowButtonOnReleaseFunc()
+                    print("UpArrowButtonOnReleaseFunc")
+                if event.button == (DownArrow):
+                    DownArrowButtonOnReleaseFunc()
+                    print("DownArrowButtonOnReleaseFunc")
+                if event.button == (RightArrow):
+                    RightArrowButtonOnReleaseFunc()
+                    print("RightArrowButtonOnReleaseFunc")
+                if event.button == (LeftArrow):
+                    LeftArrowButtonOnReleaseFunc()
+                    print("LeftArrowButtonOnReleaseFunc")
+                if event.button == (Share):
+                    ShareOnReleaseFunc()
+                    print("ShareOnReleaseFunc")
+                if event.button == (Ps):
+                    PsOnReleaseFunc()
+                    print("PsOnReleaseFunc")
+                if event.button == (Options):
+                    OptionsOnReleaseFunc()
+                    print("OptionsOnReleaseFunc")
+                if event.button == (R1Click):
+                    R1ClickOnReleaseFunc()
+                    print("R1ClickOnReleaseFunc")
+                if event.button == (R2Click):
+                    R2ClickOnReleaseFunc()
+                    print("R2ClickOnReleaseFunc")
 
             if event.type == pygame.JOYAXISMOTION:
                 axis = event.axis
                 value = event.value
                 if ((axis == RB) and (value > .80)) :
-                    RbFunc()
-                    print("RbFunc")
+                    RbOnPressFunc()
+                    print("RbOnPressFunc")
                 if ((axis == LB) and (value > .80)) :
-                    LbFunc()
-                    print("LbFunc")
+                    LbOnPressFunc()
+                    print("LbOnPressFunc")
                 if ((axis == R1Up_Down) and (value > .80)) :
                     R1DownFunc()
                     print("R1DownFunc")
