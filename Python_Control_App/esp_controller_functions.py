@@ -2,6 +2,8 @@ import urllib.request
 import customtkinter as ctk
 import json
 import requests
+import numpy as np
+import cv2 as cv
 # buttons
 X = 0
 Circle = 1
@@ -33,6 +35,30 @@ R2Up_Down = 3
 
 LB = 4
 RB = 5
+
+def CapCam():
+    CamUrl = "http://192.168.1.4/capture" 
+    while True:
+        try :
+            resp = urllib.request.urlopen(CamUrl)
+            img_array = np.array(bytearray(resp.read()), dtype=np.uint8)
+        except :
+            try :
+                resp = urllib.request.urlopen(CamUrl)
+                img_array = np.array(bytearray(resp.read()), dtype=np.uint8)
+            except :
+                print("error")
+        cap = cv.imdecode(img_array, -1)
+        
+        frame = cv.resize(cap,(560,400))
+        cv.imshow('frame', frame)
+        
+        if cv.waitKey(1) == 27:
+            break
+
+    cv.destroyAllWindows()
+
+
 
 def SendRequest(Request):
     Url = "http://192.168.1.4"
@@ -98,6 +124,11 @@ def RbOnPressFunc(event =1):
     SendRequest("/OnPressRb")
 
 # axis
+def R1Stop(event =1):
+    SendRequest("/R1Stop")
+def R2Stop(event =1):
+    SendRequest("/R2Stop")
+
 def R1UpFunc(event =1):
     SendRequest("/R1Up")
 def R1DownFunc(event =1):

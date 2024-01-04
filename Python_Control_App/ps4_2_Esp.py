@@ -2,14 +2,28 @@ import pygame
 from socket import *
 import time
 import os
-import termcolor
-import pyfiglet
+# import termcolor
+# import pyfiglet
 import urllib.request
 from esp_controller_functions import *
 
 pygame.init()
 pygame.joystick.init()
 
+
+# Flags to track movement direction
+R1moved_left = False
+R1moved_right = False
+R1moved_up = False
+R1moved_down = False
+
+R2moved_left = False
+R2moved_right = False
+R2moved_up = False
+R2moved_down = False
+
+RB_Moved = False
+LB_Moved = False
 
 def joy_Get_Init():
     get_init = pygame.joystick.get_init()
@@ -115,7 +129,7 @@ while True:
         joystick = pygame.joystick.Joystick(i)
         joystick.init()
         print("="*40)
-        print(termcolor.colored(pyfiglet.figlet_format("OSAMA"), color="blue"))
+        # print(termcolor.colored(pyfiglet.figlet_format("OSAMA"), color="blue"))
         print("="*40)
         num_Of_Joys()
         print(f"\33[37m{joyNumbers}\033[1;31m Joystick Connected")
@@ -242,36 +256,116 @@ while True:
             if event.type == pygame.JOYAXISMOTION:
                 axis = event.axis
                 value = event.value
-                if ((axis == RB) and (value > .80)) :
+
+
+                R1x_axis = joystick.get_axis(R1Right_Left)  
+                R1y_axis = joystick.get_axis(R1Up_Down)  
+                R2x_axis = joystick.get_axis(R2Right_Left)  
+                R2y_axis = joystick.get_axis(R2Up_Down) 
+                RB_axis = joystick.get_axis(RB) 
+                LB_axis = joystick.get_axis(LB) 
+
+                if ((RB_axis > .5) and not RB_Moved):
                     RbOnPressFunc()
                     print("RbOnPressFunc")
-                if ((axis == LB) and (value > .80)) :
+                    RB_Moved = True
+        
+
+                if RB_axis > .5 and not RB_Moved:
+                    RB_Moved = True
+                    RbOnPressFunc()
+                    print("LB button pressed")
+                elif RB_axis <= .5 and RB_Moved:
+                    RB_Moved = False
+                    RbOnReleaseFunc()
+                    print("LB button released")
+
+                if LB_axis > .5 and not LB_Moved:
+                    LB_Moved = True
                     LbOnPressFunc()
-                    print("LbOnPressFunc")
-                if ((axis == R1Up_Down) and (value > .80)) :
-                    R1DownFunc()
-                    print("R1DownFunc")
-                if ((axis == R1Up_Down) and (value < -.80)) :
-                    R1UpFunc()
-                    print("R1UpFunc")
-                if ((axis == R1Right_Left) and (value > .80)) :
-                    R1RightFunc()
-                    print("R1RightFunc")
-                if ((axis == R1Right_Left) and (value < -.80)) :
+                    print("LB button pressed")
+                elif LB_axis <= .5 and LB_Moved:
+                    LB_Moved = False
+                    LbOnReleaseFunc()
+                    print("LB button released")
+
+                if R1x_axis < -0.5 and not R1moved_left:
                     R1LeftFunc()
                     print("R1LeftFunc")
-                if ((axis == R2Up_Down) and (value > .80)) :
-                    R2DownFunc()
-                    print("R2DownFunc")
-                if ((axis == R2Up_Down) and (value < -.80)) :
-                    R2UpFunc()
-                    print("R2UpFunc")
-                if ((axis == R2Right_Left) and (value > .80)) :
-                    R2RightFunc()
-                    print("R2RightFunc")
-                if ((axis == R2Right_Left) and (value < -.80)) :
+                    R1moved_left = True
+                elif R1x_axis > -0.1 and R1moved_left:
+                    R1Stop()
+                    print("R1 Returned to Center ")
+                    R1moved_left = False
+
+                # Detect movement to the right
+                if R1x_axis > 0.5 and not R1moved_right:
+                    R1RightFunc()
+                    print("R1RightFunc")
+                    R1moved_right = True
+                elif R1x_axis < 0.1 and R1moved_right:
+                    R1Stop()
+                    print("R1 Returned to Center ")
+                    R1moved_right = False
+
+                # Detect movement upwards
+                if R1y_axis < -0.5 and not R1moved_up:
+                    R1UpFunc()
+                    print("R1UpFunc")
+                    R1moved_up = True
+                elif R1y_axis > -0.1 and R1moved_up:
+                    R1Stop()
+                    print("R1 Returned to Center ")
+                    R1moved_up = False
+
+                # Detect movement downwards
+                if R1y_axis > 0.5 and not R1moved_down:
+                    R1DownFunc()
+                    print("R1DownFunc")
+                    R1moved_down = True
+                elif R1y_axis < 0.1 and R1moved_down:
+                    R1Stop()
+                    print("R1 Returned to Center ")
+                    R1moved_down = False
+
+                # Detect movement to the left
+                if R2x_axis < -0.5 and not R2moved_left:
                     R2LeftFunc()
                     print("R2LeftFunc")
+                    R2moved_left = True
+                elif R2x_axis > -0.1 and R2moved_left:
+                    R2Stop()
+                    print("R2 Returned to Center ")
+                    R2moved_left = False
 
+                # Detect movement to the right
+                if R2x_axis > 0.5 and not R2moved_right:
+                    R2RightFunc()
+                    print("R2RightFunc")
+                    R2moved_right = True
+                elif R2x_axis < 0.1 and R2moved_right:
+                    R2Stop()
+                    print("R2 Returned to Center ")
+                    R2moved_right = False
+
+                # Detect movement upwards
+                if R2y_axis < -0.5 and not R2moved_up:
+                    R2UpFunc()
+                    print("R2UpFunc")
+                    R2moved_up = True
+                elif R2y_axis > -0.1 and R2moved_up:
+                    R2Stop()
+                    print("R2 Returned to Center ")
+                    R2moved_up = False
+
+                # Detect movement downwards
+                if R2y_axis > 0.5 and not R2moved_down:
+                    R2DownFunc()
+                    print("R2DownFunc")
+                    R2moved_down = True
+                elif R2y_axis < 0.1 and R2moved_down:
+                    R2Stop()
+                    print("R2 Returned to Center ")
+                    R2moved_down = False
         time.sleep(.1)
         os.system('cls')

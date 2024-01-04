@@ -6,3 +6,8 @@ build
 dist
 *.iss
 GUI_2_Esp_App_setup_v1.0.exe
+GUI_2_Esp_App_setup_v2.0.exe
+GUI_2_Esp_App_setup_v3.0.exe
+GUI_2_Esp_App_setup_v4.0.exe
+Controller_readings_setup_app.exe
+temp.py

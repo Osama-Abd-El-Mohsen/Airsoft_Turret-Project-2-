@@ -3,28 +3,34 @@ from esp_controller_functions import *
 import os
 from PIL import Image, ImageTk
 import cv2
+import threading
 
 Cwd = os.getcwd()
 color_mode_list = ['Dark', 'Light']
-photo = None  # Initialize photo as a global variable
-vid = cv2.VideoCapture("http://192.168.1.4"+":81/stream")
+photo = None 
+
+CamUrl = "http://192.168.1.4/capture" 
 
 
 def update():
-    ret, frame = vid.read()
-    frame = cv2.resize(frame,(560,400))
-    if ret:
-        global photo  # Declare photo as a global variable
-        photo = ImageTk.PhotoImage(image=Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)))
-        canvas.create_image(0, 0, image=photo, anchor=ctk.NW)
-    app.after(4, update)
+    global photo  # Declare photo as a global variable
+    while True:
+        try:
+            resp = urllib.request.urlopen(CamUrl)
+            img_array = np.array(bytearray(resp.read()), dtype=np.uint8)
+            cap = cv2.imdecode(img_array, -1)
+            frame = cv2.resize(cap, (560, 400))
+            new_photo = ImageTk.PhotoImage(image=Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)))
+            canvas.create_image(0, 0, image=new_photo, anchor=ctk.NW)
+            photo = new_photo
+        except Exception as e:
+            continue
+            print(f"Error fetching or updating image: {e}")
+        # app.after(100, update)
 
 
 
 if __name__ == '__main__':
-    # set_resolution("http://192.168.1.4",index=4)
-    # set_quality("http://192.168.1.4",value=40)
-    # config my app
     ctk.ThemeManager.load_theme('green')
     ctk.AppearanceModeTracker.set_appearance_mode('system')
     ctk.deactivate_automatic_dpi_awareness()
@@ -34,8 +40,10 @@ if __name__ == '__main__':
     app.title("ESP Control \n")
     app.geometry('1060x770')
     app.resizable(False, False)
-    # app.grid_columnconfigure(2, weight=4)
 
+    video_thread = threading.Thread(target=update)
+    video_thread.daemon = True  # Daemonize the thread to exit when the main program ends
+    video_thread.start()
     #images & Pallete
     Green      = "#4a978e"
     DarkGreen  = "#39726a"
@@ -160,8 +168,8 @@ if __name__ == '__main__':
 
     canvas = ctk.CTkCanvas(ControlelrFrame, width=560, height=400)
     canvas.grid(row=0 ,column=2,rowspan=5,padx=0,pady=0)
-    print(vid.get(cv2.CAP_PROP_FRAME_WIDTH))
-    print(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    # print(vid.get(cv2.CAP_PROP_FRAME_WIDTH))
+    # print(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     #Info Frame
     InfoAppFrame = ctk.CTkFrame(app)
@@ -218,5 +226,4 @@ if __name__ == '__main__':
     DownArrowLabel=ctk.CTkLabel(InfoFrame2,text="   AirsoftDown",image=DownArrowInfo, font=ctk.CTkFont('Arial', 25,weight='bold'),compound="left")
     DownArrowLabel.grid(row=4, padx=10, pady=5 ,column=0)
 
-    update()
     app.mainloop()

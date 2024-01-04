@@ -1,12 +1,10 @@
+#include "esp_controller_functions.h"
 #include <WiFi.h>
-#include <WebServer.h>
-#include <ESP32Servo.h>
 #include "esp_camera.h"
+#include <ArduinoJson.h>
 
 #define CAMERA_MODEL_AI_THINKER  // Has PSRAM
-#define Led 4
-#define Ser 2
-int pos = 0;
+
 
 #include "camera_pins.h"
 
@@ -17,121 +15,19 @@ IPAddress local_ip(192, 168, 1, 4);
 IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 255, 0);
 
-Servo myservo;
 
 void startCameraServer();
 void setupLedFlash(int pin);
 
-WebServer server(80);
-
-void UpArrowButtonFunc() {
-  Serial.println("UpArrow\n");
-  server.send(200, "text/plain", "UpArrow");
-}
-void DownArrowButtonFunc() {
-  Serial.println("DownArrow\n");
-  server.send(200, "text/plain", "DownArrow");
-}
-void RightArrowButtonFunc() {
-  Serial.println("RightArrow\n");
-  server.send(240, "text/plain", "RightArrow");
-}
-void LeftArrowButtonFunc() {
-  Serial.println("LeftArrow\n");
-  server.send(240, "text/plain", "LeftArrow");
-}
-void TriangleFunc() {
-  Serial.println("Triangle\n");
-  server.send(240, "text/plain", "Triangle");
-}
-void CircleFunc() {
-  Serial.println("Circle\n");
-  server.send(240, "text/plain", "Circle");
-}
-void XFunc() {
-  Serial.println("X\n");
-  server.send(240, "text/plain", "X");
-}
-void SquareFunc() {
-  Serial.println("Square\n");
-  server.send(240, "text/plain", "Square");
-}
-void LTFunc() {
-  Serial.println("LT\n");
-  server.send(240, "text/plain", "LT");
-}
-void RTFunc() {
-  Serial.println("RT\n");
-  server.send(240, "text/plain", "RT");
-}
-void LBFunc() {
-  Serial.println("LB\n");
-  server.send(240, "text/plain", "LB");
-}
-void RBFunc() {
-  Serial.println("RB\n");
-  server.send(240, "text/plain", "RB");
-}
-void R1UpFunc() {
-  Serial.println("R1Up\n");
-  server.send(240, "text/plain", "R1Up");
-}
-void R1DownFunc() {
-  Serial.println("R1Down\n");
-  server.send(240, "text/plain", "R1Down");
-}
-void R1RightFunc() {
-  Serial.println("R1Right\n");
-  server.send(240, "text/plain", "R1Right");
-}
-void R1LeftFunc() {
-  Serial.println("R1Left\n");
-  server.send(240, "text/plain", "R1Left");
-}
-void R2UpFunc() {
-  Serial.println("R2Up\n");
-  server.send(240, "text/plain", "R2Up");
-}
-void R2DownFunc() {
-  Serial.println("R2Down\n");
-  server.send(240, "text/plain", "R2Down");
-}
-void R2RightFunc() {
-  Serial.println("R2Right\n");
-  server.send(240, "text/plain", "R2Right");
-}
-void R2LeftFunc() {
-  Serial.println("R2Left\n");
-  server.send(240, "text/plain", "R2Left");
-}
-void ShareFunc() {
-  Serial.println("Share\n");
-  server.send(240, "text/plain", "Share");
-}
-void PsFunc() {
-  Serial.println("Ps\n");
-  server.send(240, "text/plain", "Ps");
-}
-void OptionsFunc() {
-  Serial.println("Options\n");
-  server.send(240, "text/plain", "Options");
-}
-void R1ClickFunc() {
-  Serial.println("R1Click\n");
-  server.send(240, "text/plain", "R1Click");
-}
-void R2ClickFunc() {
-  Serial.println("R2Click\n");
-  server.send(240, "text/plain", "R2Click");
-}
-
-
 void setup() {
+  
   Serial.begin(115200);
   Serial.setDebugOutput(true);
   Serial.println();
-  myservo.attach(Ser);
-  pinMode(Led, OUTPUT);
+  servoUD.attach(ServoUD);
+  servoUD.write(0);
+  servoLR.write(0);
+  servoLR.attach(ServoLR);
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer = LEDC_TIMER_0;
@@ -152,7 +48,7 @@ void setup() {
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 20000000;
-  config.frame_size = FRAMESIZE_UXGA;
+  config.frame_size = FRAMESIZE_SVGA;
   config.pixel_format = PIXFORMAT_JPEG;  // for streaming
   config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
   config.fb_location = CAMERA_FB_IN_PSRAM;
@@ -179,7 +75,7 @@ void setup() {
 #endif
   esp_err_t err = esp_camera_init(&config);
   if (err != ESP_OK) {
-    Serial.printf("Camera init failed with error 0x%x", err);
+    Serial.printf("Camera init failed with error 0x%Ox", err);
     return;
   }
   sensor_t* s = esp_camera_sensor_get();
@@ -210,19 +106,42 @@ void setup() {
   Serial.print(F("Camera Ready! Use 'http://"));
   Serial.print(local_ip);
   Serial.println(F("' to connect"));
-  pinMode(Led, OUTPUT);
-  server.on("/UpArrow", HTTP_GET, UpArrowButtonFunc);
-  server.on("/RightArrow", HTTP_GET, RightArrowButtonFunc);
-  server.on("/LeftArrow", HTTP_GET, LeftArrowButtonFunc);
-  server.on("/DownArrow", HTTP_GET, DownArrowButtonFunc);
-  server.on("/Tr", HTTP_GET, TriangleFunc);
-  server.on("/Circle", HTTP_GET, CircleFunc);
-  server.on("/Square", HTTP_GET, SquareFunc);
-  server.on("/X", HTTP_GET, XFunc);
-  server.on("/Lt", HTTP_GET, LTFunc);
-  server.on("/Rt", HTTP_GET, RTFunc);
-  server.on("/Lb", HTTP_GET, LBFunc);
-  server.on("/Rb", HTTP_GET, RBFunc);
+  server.on("/OnPressUpArrow", HTTP_GET, UpArrowButtonOnPressFunc);
+  server.on("/OnPressRightArrow", HTTP_GET, RightArrowButtonOnPressFunc);
+  server.on("/OnPressLeftArrow", HTTP_GET, LeftArrowButtonOnPressFunc);
+  server.on("/OnPressDownArrow", HTTP_GET, DownArrowButtonOnPressFunc);
+  server.on("/OnPressTr", HTTP_GET, TriangleOnPressFunc);
+  server.on("/OnPressCircle", HTTP_GET, CircleOnPressFunc);
+  server.on("/OnPressSquare", HTTP_GET, SquareOnPressFunc);
+  server.on("/OnPressX", HTTP_GET, XOnPressFunc);
+  server.on("/OnPressLt", HTTP_GET, LTOnPressFunc);
+  server.on("/OnPressRt", HTTP_GET, RTOnPressFunc);
+  server.on("/OnPressLb", HTTP_GET, LBOnPressFunc);
+  server.on("/OnPressRb", HTTP_GET, RBOnPressFunc);
+  server.on("/OnPressShare", HTTP_GET, ShareOnPressFunc);
+  server.on("/OnPressPs", HTTP_GET, PsOnPressFunc);
+  server.on("/OnPressOptions", HTTP_GET, OptionsOnPressFunc);
+  server.on("/OnPressR1Click", HTTP_GET, R1ClickOnPressFunc);
+  server.on("/OnPressR2Click", HTTP_GET, R2ClickOnPressFunc);
+
+  server.on("/OnReleaseUpArrow", HTTP_GET, UpArrowButtonOnReleaseFunc);
+  server.on("/OnReleaseRightArrow", HTTP_GET, RightArrowButtonOnReleaseFunc);
+  server.on("/OnReleaseLeftArrow", HTTP_GET, LeftArrowButtonOnReleaseFunc);
+  server.on("/OnReleaseDownArrow", HTTP_GET, DownArrowButtonOnReleaseFunc);
+  server.on("/OnReleaseTr", HTTP_GET, TriangleOnReleaseFunc);
+  server.on("/OnReleaseCircle", HTTP_GET, CircleOnReleaseFunc);
+  server.on("/OnReleaseSquare", HTTP_GET, SquareOnReleaseFunc);
+  server.on("/OnReleaseX", HTTP_GET, XOnReleaseFunc);
+  server.on("/OnReleaseLt", HTTP_GET, LTOnReleaseFunc);
+  server.on("/OnReleaseRt", HTTP_GET, RTOnReleaseFunc);
+  server.on("/OnReleaseLb", HTTP_GET, LBOnReleaseFunc);
+  server.on("/OnReleaseRb", HTTP_GET, RBOnReleaseFunc);
+  server.on("/OnReleaseShare", HTTP_GET, ShareOnReleaseFunc);
+  server.on("/OnReleasePs", HTTP_GET, PsOnReleaseFunc);
+  server.on("/OnReleaseOptions", HTTP_GET, OptionsOnReleaseFunc);
+  server.on("/OnReleaseR1Click", HTTP_GET, R1ClickOnReleaseFunc);
+  server.on("/OnReleaseR2Click", HTTP_GET, R2ClickOnReleaseFunc);
+
   server.on("/R1Up", HTTP_GET, R1UpFunc);
   server.on("/R1Down", HTTP_GET, R1DownFunc);
   server.on("/R1Right", HTTP_GET, R1RightFunc);
@@ -230,13 +149,19 @@ void setup() {
   server.on("/R2Up", HTTP_GET, R2UpFunc);
   server.on("/R2Down", HTTP_GET, R2DownFunc);
   server.on("/R2Right", HTTP_GET, R2RightFunc);
-  server.on("/R2Left", HTTP_GET, R1LeftFunc);
-  server.on("/Share", HTTP_GET, ShareFunc);
-  server.on("/Ps", HTTP_GET, PsFunc);
-  server.on("/Options", HTTP_GET, OptionsFunc);
-  server.on("/R1Click", HTTP_GET, R1ClickFunc);
-  server.on("/R2Click", HTTP_GET, R2ClickFunc);
+  server.on("/R2Left", HTTP_GET, R2LeftFunc);
+  server.on("/R1Stop", HTTP_GET, R1Stop);
+  server.on("/R2Stop", HTTP_GET, R2Stop);
+  // server.on("/distance", HTTP_GET, distance);
+
   server.begin();
+  // pinMode(Led, OUTPUT);
+  pinMode(Motor1F, OUTPUT);
+  pinMode(Motor1B, OUTPUT);
+  pinMode(Motor2F, OUTPUT);
+  pinMode(Motor2B, OUTPUT);
+  
+  
 }
 
 void loop() {
