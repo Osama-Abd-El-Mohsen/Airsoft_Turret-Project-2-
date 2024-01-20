@@ -8,7 +8,7 @@
 
   - ## Airsoft_Control_App 
     ### (Sending PS4 Controller readings to ESP)
-![Alt text](/Assets/PS4_2_ESP.png)
+![Alt text](/assits/PS4_2_ESP.png)
 
 - ## Airsoft_Control_App 
   ### (PS4_Controller_With_ESP)
