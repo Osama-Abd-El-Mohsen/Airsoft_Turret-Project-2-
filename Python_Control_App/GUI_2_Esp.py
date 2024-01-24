@@ -226,4 +226,7 @@ if __name__ == '__main__':
     DownArrowLabel=ctk.CTkLabel(InfoFrame2,text="   AirsoftDown",image=DownArrowInfo, font=ctk.CTkFont('Arial', 25,weight='bold'),compound="left")
     DownArrowLabel.grid(row=4, padx=10, pady=5 ,column=0)
 
+    
+
+
     app.mainloop()

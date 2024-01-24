@@ -7,17 +7,21 @@
 WebServer server(80);
 
 #define Motor1F 4
-#define Motor1B 13
-#define Motor2F 14
-#define Motor2B 15
-#define ServoUD 12
-#define ServoLR 2
+#define Motor1B 2
+#define Motor2F 3
+#define Motor2B 1
+#define ShootPin 15
+#define ServoUDPin 13
+#define ServoLRPin 12
 // #define Led 4
+#define buzzer 14
 
 int ServoUDPos = 0;
 int ServoLRPos = 0;
 
+bool ServoUD_State = true ;
 
+Servo servoShoot;
 Servo servoUD;
 Servo servoLR;
 
@@ -26,22 +30,43 @@ Servo servoLR;
 //   digitalWrite(Led, !digitalRead(Led));
 // }
 
+void Buzzer()
+{
+  digitalWrite(buzzer,HIGH);
+  delay(500);
+  digitalWrite(buzzer,LOW);
+  delay(500);
+}
+
+void Shoot_Func() {
+  servoShoot.write(110);
+  Serial.println("shoot");
+  delay(1000);                       
+  servoShoot.write(180);
+  Serial.println("return");
+  delay(100);                       
+  
+}
+
+void ServoUD_Stop()
+{
+  ServoUD_State = false;
+}
+
 void ServoUD_U() {
-  if (ServoUDPos <= 160 ) {
-    ServoUDPos+=20;
-    Serial.println(ServoUDPos);
-    servoUD.write(ServoUDPos);
-    delay(15);                       
-  }
+    if (ServoUDPos <= 90 ) {
+      ServoUDPos+=1;
+      Serial.println(ServoUDPos);
+      servoUD.write(ServoUDPos);
+    }
 }
 
 void ServoUD_D() {
-  if (ServoUDPos > 0 ) {
-    ServoUDPos-=20;
-    Serial.println(ServoUDPos);
-    servoUD.write(ServoUDPos);
-    delay(15);                       
-  }
+    if (ServoUDPos > 0 ) {
+      ServoUDPos-=1;
+      Serial.println(ServoUDPos);
+      servoUD.write(ServoUDPos);
+    }
 }
 
 void ServoLR_L() {
@@ -49,7 +74,6 @@ void ServoLR_L() {
     ServoLRPos-=5;
     Serial.println(ServoLRPos);
     servoLR.write(ServoLRPos);
-    delay(15);                       
   }
 }
 
@@ -58,12 +82,8 @@ void ServoLR_R() {
     ServoLRPos+=5;
     Serial.println(ServoLRPos);
     servoLR.write(ServoLRPos);
-    delay(15);                       
   }
 }
-
-
-
 
 void DcMotorsForward(void) {
   digitalWrite(Motor1F, HIGH);
@@ -94,6 +114,7 @@ void DcMotorsStop(void) {
   digitalWrite(Motor2F, LOW);
   digitalWrite(Motor1B, LOW);
   digitalWrite(Motor2B, LOW);
+
 }
 
 
@@ -104,7 +125,7 @@ void R1Stop() {
 }
 void R2Stop() {
   Serial.println("R2Stop\n");
-  // ServoUD_U();
+  ServoUD_Stop();
   server.send(200, "text/plain", "R2Stop");
 }
 void UpArrowButtonOnPressFunc() {
@@ -129,7 +150,7 @@ void LeftArrowButtonOnPressFunc() {
 }
 void TriangleOnPressFunc() {
   Serial.println("OnPressTr\n");
-  // LedOnOff();
+  Buzzer();
   server.send(204, "text/plain", "OnPressTr");
 }
 void CircleOnPressFunc() {
@@ -152,7 +173,7 @@ void LTOnPressFunc() {
 }
 void RTOnPressFunc() {
   Serial.println("OnPressRt\n");
-  // DcShoot();
+  Shoot_Func();
   server.send(209, "text/plain", "OnPressRt");
 }
 void LBOnPressFunc() {
@@ -165,33 +186,16 @@ void RBOnPressFunc() {
   ServoLR_R();
   server.send(211, "text/plain", "OnPressRb");
 }
-void ShareOnPressFunc() {
-  Serial.println("OnPressShare\n");
-  server.send(212, "text/plain", "OnPressShare");
-}
-void PsOnPressFunc() {
-  Serial.println("OnPressPs\n");
-  server.send(213, "text/plain", "OnPressPs");
-}
-void OptionsOnPressFunc() {
-  Serial.println("OnPressOptions\n");
-  server.send(214, "text/plain", "OnPressOptions");
-}
-void R1ClickOnPressFunc() {
-  Serial.println("OnPressR1Click\n");
-  server.send(215, "text/plain", "OnPressR1Click");
-}
-void R2ClickOnPressFunc() {
-  Serial.println("OnPressR2Click\n");
-  server.send(216, "text/plain", "OnPressR2Click");
-}
+
 
 void UpArrowButtonOnReleaseFunc() {
   Serial.println("OnReleaseUpArrow\n");
+  ServoUD_Stop();
   server.send(217, "text/plain", "OnReleaseUpArrow");
 }
 void DownArrowButtonOnReleaseFunc() {
   Serial.println("OnReleaseDownArrow\n");
+  ServoUD_Stop();
   server.send(218, "text/plain", "OnReleaseDownArrow");
 }
 void RightArrowButtonOnReleaseFunc() {
@@ -238,26 +242,7 @@ void RBOnReleaseFunc() {
   Serial.println("OnReleaseRb\n");
   server.send(228, "text/plain", "OnReleaseRb");
 }
-void ShareOnReleaseFunc() {
-  Serial.println("OnReleaseShare\n");
-  server.send(229, "text/plain", "OnReleaseShare");
-}
-void PsOnReleaseFunc() {
-  Serial.println("OnReleasePs\n");
-  server.send(230, "text/plain", "OnReleasePs");
-}
-void OptionsOnReleaseFunc() {
-  Serial.println("OnReleaseOptions\n");
-  server.send(231, "text/plain", "OnReleaseOptions");
-}
-void R1ClickOnReleaseFunc() {
-  Serial.println("OnReleaseR1Click\n");
-  server.send(232, "text/plain", "OnReleaseR1Click");
-}
-void R2ClickOnReleaseFunc() {
-  Serial.println("OnReleaseR2Click\n");
-  server.send(233, "text/plain", "OnReleaseR2Click");
-}
+
 
 
 void R1UpFunc() {
@@ -280,6 +265,7 @@ void R1LeftFunc() {
   server.send(237, "text/plain", "R1Left");
   DcMotorsLeft();
 }
+
 void R2UpFunc() {
   Serial.println("R2Up\n");
   ServoUD_U();
@@ -300,6 +286,7 @@ void R2LeftFunc() {
   ServoLR_L();
   server.send(241, "text/plain", "R2Left");
 }
+
 // void distance() {
 //   long  distance;
 //   distance = 25;
@@ -310,4 +297,5 @@ void R2LeftFunc() {
 //   server.send(242, "application/json", output);
 
 // }
+
 #endif
