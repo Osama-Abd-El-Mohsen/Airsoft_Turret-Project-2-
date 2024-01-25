@@ -61,7 +61,7 @@ def CapCam():
 
 
 def SendRequest(Request):
-    Url = "http://192.168.1.4"
+    Url = "http://192.168.1.5"
     try:
         urllib.request.urlopen(Url+Request)
     except Exception as e:

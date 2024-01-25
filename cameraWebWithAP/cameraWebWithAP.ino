@@ -1,7 +1,8 @@
-#include "esp_controller_functions.h"
+// #include "esp_controller_functions.h"
 #include <WiFi.h>
 #include "esp_camera.h"
-#include <ArduinoJson.h>
+// #include <ArduinoJson.h>
+// #include <WebServer.h>
 
 #define CAMERA_MODEL_AI_THINKER  // Has PSRAM
 
@@ -19,9 +20,6 @@ void startCameraServer();
 void setupLedFlash(int pin);
 
 void setup() {
-  
-  ESP32PWM::allocateTimer(2);
-  ESP32PWM::allocateTimer(3);
   
   Serial.begin(115200);
   Serial.setDebugOutput(true);
@@ -108,65 +106,8 @@ void setup() {
   Serial.print(local_ip);
   Serial.println(F("' to connect"));
   
-  server.on("/OnPressUpArrow", HTTP_GET, UpArrowButtonOnPressFunc);
-  server.on("/OnPressRightArrow", HTTP_GET, RightArrowButtonOnPressFunc);
-  server.on("/OnPressLeftArrow", HTTP_GET, LeftArrowButtonOnPressFunc);
-  server.on("/OnPressDownArrow", HTTP_GET, DownArrowButtonOnPressFunc);
-  server.on("/OnPressTr", HTTP_GET, TriangleOnPressFunc);
-  server.on("/OnPressCircle", HTTP_GET, CircleOnPressFunc);
-  server.on("/OnPressSquare", HTTP_GET, SquareOnPressFunc);
-  server.on("/OnPressX", HTTP_GET, XOnPressFunc);
-  server.on("/OnPressLt", HTTP_GET, LTOnPressFunc);
-  server.on("/OnPressRt", HTTP_GET, RTOnPressFunc);
-  server.on("/OnPressLb", HTTP_GET, LBOnPressFunc);
-  server.on("/OnPressRb", HTTP_GET, RBOnPressFunc);
-
-
-  server.on("/OnReleaseUpArrow", HTTP_GET, UpArrowButtonOnReleaseFunc);
-  server.on("/OnReleaseRightArrow", HTTP_GET, RightArrowButtonOnReleaseFunc);
-  server.on("/OnReleaseLeftArrow", HTTP_GET, LeftArrowButtonOnReleaseFunc);
-  server.on("/OnReleaseDownArrow", HTTP_GET, DownArrowButtonOnReleaseFunc);
-  server.on("/OnReleaseTr", HTTP_GET, TriangleOnReleaseFunc);
-  server.on("/OnReleaseCircle", HTTP_GET, CircleOnReleaseFunc);
-  server.on("/OnReleaseSquare", HTTP_GET, SquareOnReleaseFunc);
-  server.on("/OnReleaseX", HTTP_GET, XOnReleaseFunc);
-  server.on("/OnReleaseLt", HTTP_GET, LTOnReleaseFunc);
-  server.on("/OnReleaseRt", HTTP_GET, RTOnReleaseFunc);
-  server.on("/OnReleaseLb", HTTP_GET, LBOnReleaseFunc);
-  server.on("/OnReleaseRb", HTTP_GET, RBOnReleaseFunc);
-
-
-  server.on("/R1Up", HTTP_GET, R1UpFunc);
-  server.on("/R1Down", HTTP_GET, R1DownFunc);
-  server.on("/R1Right", HTTP_GET, R1RightFunc);
-  server.on("/R1Left", HTTP_GET, R1LeftFunc);
-  server.on("/R2Up", HTTP_GET, R2UpFunc);
-  server.on("/R2Down", HTTP_GET, R2DownFunc);
-  server.on("/R2Right", HTTP_GET, R2RightFunc);
-  server.on("/R2Left", HTTP_GET, R2LeftFunc);
-  server.on("/R1Stop", HTTP_GET, R1Stop);
-  server.on("/R2Stop", HTTP_GET, R2Stop);
-  // server.on("/distance", HTTP_GET, distance);
-
-  server.begin();
-  // pinMode(Led, OUTPUT);
-  pinMode(Motor1F, OUTPUT);
-  pinMode(Motor1B, OUTPUT);
-  pinMode(Motor2F, OUTPUT);
-  pinMode(Motor2B, OUTPUT);
-  pinMode(buzzer, OUTPUT);
-
-  servoShoot.attach(ShootPin);
-  servoUD.attach(ServoUDPin);
-  servoLR.attach(ServoLRPin);
-
-  servoUD.write(0);
-  servoLR.write(0);
-  servoShoot.write(180);
-  
   
 }
 
 void loop() {
-  server.handleClient();
 }
