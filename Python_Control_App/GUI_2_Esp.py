@@ -13,7 +13,7 @@ CamUrl = "http://192.168.1.4/capture"
 
 
 def update():
-    global photo  # Declare photo as a global variable
+    global photo  
     while True:
         try:
             resp = urllib.request.urlopen(CamUrl)
@@ -94,7 +94,7 @@ if __name__ == '__main__':
     MainFrame.grid(row=0, column=0, padx=10, pady=10,columnspan=4)
 
     # Label & info
-    MainLabel = ctk.CTkLabel(MainFrame, text="AirSoft Control App", font=ctk.CTkFont('Cairo', 40,weight="bold"))
+    MainLabel = ctk.CTkLabel(MainFrame, text="Sentry Defense Turret", font=ctk.CTkFont('Cairo', 40,weight="bold"))
     MainLabel.grid(row=0, column=0, padx=10, pady=10)
 
     ControlelrFrame = ctk.CTkFrame(MainFrame)

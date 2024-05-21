@@ -1,8 +1,6 @@
-// #include "esp_controller_functions.h"
 #include <WiFi.h>
 #include "esp_camera.h"
-// #include <ArduinoJson.h>
-// #include <WebServer.h>
+
 
 #define CAMERA_MODEL_AI_THINKER  // Has PSRAM
 
